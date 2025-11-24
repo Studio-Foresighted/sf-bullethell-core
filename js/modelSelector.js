@@ -139,10 +139,7 @@ export class ModelSelector {
     async loadModelList() {
         try {
             const response = await fetch('/api/models');
-            if (!response.ok) {
-                console.warn('API endpoint not found, falling back to local model_config.json');
-                throw new Error('Failed to load model list');
-            }
+            if (!response.ok) throw new Error('Failed to load model list');
             const filenames = await response.json();
             this.models = filenames.map(name => ({
                 name: name,
@@ -150,26 +147,19 @@ export class ModelSelector {
                 category: 'external'
             }));
         } catch (err) {
-            console.error('Error loading model list:', err);
-            // Fallback to local model_config.json
-            await this.loadLocalModelConfig();
-        }
-    }
-
-    async loadLocalModelConfig() {
-        try {
-            const response = await fetch('model_config.json');
-            if (!response.ok) throw new Error('Failed to load local model config');
-            const config = await response.json();
-            this.models = config.enemyModels.map(name => ({
+            console.warn('API load failed, using fallback model list:', err);
+            // Fallback for static hosting
+            const fallbackModels = [
+                'Soldier.glb',
+                'space_ship_hallway.glb',
+                'readyplayer.me.glb',
+                'DragonAttenuation.glb'
+            ];
+            this.models = fallbackModels.map(name => ({
                 name: name,
                 file: name,
-                category: 'local'
+                category: 'external'
             }));
-            console.log('Loaded models from local config:', this.models);
-        } catch (err) {
-            console.error('Error loading local model config:', err);
-            this.models = []; // Default to empty
         }
     }
 
@@ -181,10 +171,21 @@ export class ModelSelector {
             if (config.playerModel) this.config.playerModel = config.playerModel;
             if (config.enemyModels) this.config.enemyModels = config.enemyModels;
             this.configLoaded = true;
-            console.log('Config loaded:', this.config);
+            console.log('Config loaded from API:', this.config);
         } catch (err) {
-            console.warn('No saved config found, using defaults');
-            this.configLoaded = true;
+            console.warn('API config load failed, trying static file...');
+            try {
+                const response = await fetch('model_config.json');
+                if (!response.ok) throw new Error('Failed to load static config');
+                const config = await response.json();
+                if (config.playerModel) this.config.playerModel = config.playerModel;
+                if (config.enemyModels) this.config.enemyModels = config.enemyModels;
+                this.configLoaded = true;
+                console.log('Config loaded from static file:', this.config);
+            } catch (staticErr) {
+                console.warn('No saved config found, using defaults');
+                this.configLoaded = true;
+            }
         }
     }
 
@@ -549,27 +550,28 @@ export class ModelSelector {
             }).then(response => {
                 if (response.ok) {
                     console.log('Config saved to server');
-                    // Notify game and wait for assets to reload
-                    this.game.setCurrentModelConfig(configToSave).then(() => {
-                        // Complete loading bar
-                        clearInterval(loadingInterval);
-                        loadingBar.style.width = '100%';
-                        loadingText.textContent = '100%';
-                        
-                        // Hide loading screen after brief delay
-                        setTimeout(() => {
-                            reloadLoadingScreen.style.display = 'none';
-                        }, 500);
-                    });
                 } else {
-                    console.error('Failed to save config to server');
-                    clearInterval(loadingInterval);
-                    reloadLoadingScreen.style.display = 'none';
+                    console.warn('Failed to save config to server (likely static host), proceeding with local update');
                 }
-            }).catch(err => {
-                console.error('Error saving config:', err);
+                // Notify game and wait for assets to reload
+                return this.game.setCurrentModelConfig(configToSave);
+            }).then(() => {
+                // Complete loading bar
                 clearInterval(loadingInterval);
-                reloadLoadingScreen.style.display = 'none';
+                loadingBar.style.width = '100%';
+                loadingText.textContent = '100%';
+                
+                // Hide loading screen after brief delay
+                setTimeout(() => {
+                    reloadLoadingScreen.style.display = 'none';
+                }, 500);
+            }).catch(err => {
+                console.warn('Error saving config (likely static host), proceeding with local update:', err);
+                // Still try to update locally
+                this.game.setCurrentModelConfig(configToSave).then(() => {
+                     clearInterval(loadingInterval);
+                     reloadLoadingScreen.style.display = 'none';
+                });
             });
         } else {
             // Fallback if loading screen not found
@@ -580,11 +582,14 @@ export class ModelSelector {
             }).then(response => {
                 if (response.ok) {
                     console.log('Config saved to server');
-                    this.game.setCurrentModelConfig(configToSave);
                 } else {
-                    console.error('Failed to save config to server');
+                    console.warn('Failed to save config to server');
                 }
-            }).catch(err => console.error('Error saving config:', err));
+                this.game.setCurrentModelConfig(configToSave);
+            }).catch(err => {
+                console.warn('Error saving config:', err);
+                this.game.setCurrentModelConfig(configToSave);
+            });
         }
     }
 
@@ -594,7 +599,8 @@ export class ModelSelector {
             if (cb) cb(this.loadedModels.get(filename).clone(true));
             return;
         }
-        const path = `/external_models/${filename}`;
+        const isKnownLocal = ['Soldier.glb', 'readyplayer.me.glb', 'DragonAttenuation.glb', 'space_ship_hallway.glb'].includes(filename);
+        const path = isKnownLocal ? `assets/models/${filename}` : `/external_models/${filename}`;
         this.loader.load(
             path,
             (gltf) => {

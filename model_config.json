@@ -1,9 +1,7 @@
 {
-    "playerModel": "BoomBox.glb",
+    "playerModel": "Soldier.glb",
     "enemyModels": [
-        "facecap.glb",
-        "rolex.glb",
-        "ShadowmappableMesh.glb",
-        "IridescenceLamp.glb"
+        "readyplayer.me.glb",
+        "DragonAttenuation.glb"
     ]
 }
