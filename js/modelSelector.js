@@ -139,7 +139,10 @@ export class ModelSelector {
     async loadModelList() {
         try {
             const response = await fetch('/api/models');
-            if (!response.ok) throw new Error('Failed to load model list');
+            if (!response.ok) {
+                console.warn('API endpoint not found, falling back to local model_config.json');
+                throw new Error('Failed to load model list');
+            }
             const filenames = await response.json();
             this.models = filenames.map(name => ({
                 name: name,
@@ -148,7 +151,25 @@ export class ModelSelector {
             }));
         } catch (err) {
             console.error('Error loading model list:', err);
-            this.models = [];
+            // Fallback to local model_config.json
+            await this.loadLocalModelConfig();
+        }
+    }
+
+    async loadLocalModelConfig() {
+        try {
+            const response = await fetch('model_config.json');
+            if (!response.ok) throw new Error('Failed to load local model config');
+            const config = await response.json();
+            this.models = config.enemyModels.map(name => ({
+                name: name,
+                file: name,
+                category: 'local'
+            }));
+            console.log('Loaded models from local config:', this.models);
+        } catch (err) {
+            console.error('Error loading local model config:', err);
+            this.models = []; // Default to empty
         }
     }
 
