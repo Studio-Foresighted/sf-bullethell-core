@@ -8,16 +8,11 @@ window.addEventListener('DOMContentLoaded', async () => {
     const loadingText = document.querySelector('.loading-text');
     const logoScreen = document.getElementById('logo-screen');
     
-    // Show logo screen first
-    logoScreen.style.display = 'flex';
-    loadingScreen.style.display = 'none';
-    startScreen.style.display = 'none';
-
-    // Transition from logo to loading screen
-    await new Promise(resolve => setTimeout(resolve, 1500)); // Show logo for 1.5 seconds
+    // Show loading screen immediately
     logoScreen.style.display = 'none';
     loadingScreen.style.display = 'flex';
-    
+    startScreen.style.display = 'none';
+
     // Animate loading bar while config loads
     let progress = 0;
     const loadingInterval = setInterval(() => {
