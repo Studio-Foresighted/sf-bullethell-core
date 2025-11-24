@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Void Crawler</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Game Container -->
+    <div id="game-container"></div>
+
+    <!-- UI Layer -->
+    <div id="ui-layer">
+        <!-- Logo Screen -->
+        <div id="logo-screen" style="display: flex; justify-content: center; align-items: center; height: 100vh; background: black;">
+            <h1 class="glitch-text" data-text="VOID CRAWLER">VOID CRAWLER</h1>
+        </div>
+
+        <!-- Loading Screen -->
+        <div id="loading-screen" style="display: none;">
+            <div class="loading-container">
+                <h1 class="glitch-text" data-text="VOID CRAWLER">VOID CRAWLER</h1>
+                <p class="subtitle">INITIALIZING SYSTEMS...</p>
+                <div class="loading-bar">
+                    <div class="loading-bar-fill"></div>
+                </div>
+                <p class="loading-text">0%</p>
+            </div>
+        </div>
+
+        <!-- Start Screen -->
+        <div id="start-screen">
+            <h1 class="glitch-text" data-text="VOID CRAWLER">VOID CRAWLER</h1>
+            <p class="subtitle">SYSTEM INITIALIZED...</p>
+            <div id="selected-model-display" style="margin-bottom: 20px; color: var(--accent); font-family: 'Orbitron', sans-serif;">
+                Selected Model: Default
+            </div>
+            <button id="start-btn">ENTER THE VOID</button>
+            <div class="controls-hint">
+                <span>[W,A,S,D] MOVE</span>
+                <span>[MOUSE] AIM</span>
+                <span>[L-CLICK] FIRE</span>
+            </div>
+        </div>
+
+        <!-- HUD (Hidden initially) -->
+        <div id="hud" style="display: none;">
+            <!-- Top Bar -->
+            <div class="hud-top">
+                <div class="resource-bar health-bar">
+                    <div class="bar-fill" id="hp-fill" style="width: 100%;"></div>
+                    <span class="bar-text">HP 100/100</span>
+                </div>
+                <div class="resource-bar mana-bar">
+                    <div class="bar-fill" id="mp-fill" style="width: 100%;"></div>
+                    <span class="bar-text">MP 50/50</span>
+                </div>
+            </div>
+
+            <!-- Bottom Bar (Skills/XP) -->
+            <div class="hud-bottom">
+                <div class="skill-slot" id="skill-1">
+                    <span class="key-hint">LMB</span>
+                </div>
+                <div class="skill-slot" id="skill-2">
+                    <span class="key-hint">RMB</span>
+                </div>
+                <div class="skill-slot" id="skill-space">
+                    <span class="key-hint">SPC</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pause Screen (Hidden initially) -->
+        <div id="pause-screen" style="display: none;">
+            <h2 class="glitch-text">PAUSED</h2>
+            <p class="subtitle">PRESS [ESC] TO RESUME</p>
+        </div>
+
+        <!-- Game Over Screen (Hidden initially) -->
+        <div id="game-over-screen" style="display: none;">
+            <h2 class="glitch-text" data-text="SYSTEM FAILURE">SYSTEM FAILURE</h2>
+            <p class="subtitle">SIGNAL LOST...</p>
+            <button id="restart-btn">REBOOT SYSTEM</button>
+        </div>
+
+        <!-- Victory Screen (Hidden initially) -->
+        <div id="victory-screen" style="display: none;">
+            <h2 class="glitch-text" data-text="SECTOR CLEARED">SECTOR CLEARED</h2>
+            <p class="subtitle">THREAT ELIMINATED</p>
+            <button id="next-btn">CONTINUE</button>
+        </div>
+
+        <!-- Reload Loading Screen (Hidden initially) -->
+        <div id="reload-loading-screen" style="display: none;">
+            <div class="loading-container">
+                <p class="subtitle">UPDATING MODELS...</p>
+                <div class="loading-bar">
+                    <div class="loading-bar-fill"></div>
+                </div>
+                <p class="loading-text">0%</p>
+            </div>
+        </div>
+        
+        <!-- CRT Scanline Overlay -->
+        <div class="scanlines"></div>
+    </div>
+
+    <!-- Fullscreen Button -->
+    <div id="fullscreen-btn-container">
+        <button id="fullscreen-btn">⛶</button>
+    </div>
+
+    <!-- Model Selector UI -->
+    <div id="model-selector-btn-container">
+        <button id="model-selector-btn">MODELS</button>
+    </div>
+
+    <div id="model-selector-panel" class="hidden">
+        <div class="panel-header">
+            <h2>MODEL REPOSITORY</h2>
+            <button id="close-panel-btn">X</button>
+        </div>
+        <div id="model-grid">
+            <!-- Models will be injected here -->
+        </div>
+        <div class="panel-footer">
+            <button id="save-config-btn">SAVE CONFIGURATION</button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "./js/lib/three.module.js"
+            }
+        }
+    </script>
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>

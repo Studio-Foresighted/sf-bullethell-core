@@ -1,0 +1,9 @@
+{
+    "playerModel": "BoomBox.glb",
+    "enemyModels": [
+        "facecap.glb",
+        "rolex.glb",
+        "ShadowmappableMesh.glb",
+        "IridescenceLamp.glb"
+    ]
+}
