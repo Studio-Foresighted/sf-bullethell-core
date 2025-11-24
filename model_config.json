@@ -1,7 +1,12 @@
 {
-    "playerModel": "Soldier.glb",
+    "playerModel": "BoomBox.glb",
     "enemyModels": [
         "readyplayer.me.glb",
-        "DragonAttenuation.glb"
+        "DragonAttenuation.glb",
+        "rolex.glb",
+        "ShaderBall.glb",
+        "facecap.glb",
+        "duck.glb",
+        "PrimaryIonDrive.glb"
     ]
 }

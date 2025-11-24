@@ -137,55 +137,37 @@ export class ModelSelector {
     }
 
     async loadModelList() {
-        try {
-            const response = await fetch('/api/models');
-            if (!response.ok) throw new Error('Failed to load model list');
-            const filenames = await response.json();
-            this.models = filenames.map(name => ({
-                name: name,
-                file: name,
-                category: 'external'
-            }));
-        } catch (err) {
-            console.warn('API load failed, using fallback model list:', err);
-            // Fallback for static hosting
-            const fallbackModels = [
-                'Soldier.glb',
-                'space_ship_hallway.glb',
-                'readyplayer.me.glb',
-                'DragonAttenuation.glb'
-            ];
-            this.models = fallbackModels.map(name => ({
-                name: name,
-                file: name,
-                category: 'external'
-            }));
-        }
+        // Static model list since we are running locally/static
+        const filenames = [
+            'AnisotropyBarnLamp.glb', 'bath_day.glb', 'BoomBox.glb', 'coffeemat.glb', 'coffeeMug.glb', 
+            'collision-world.glb', 'DispersionTest.glb', 'DragonAttenuation.glb', 'duck.glb', 'dungeon_warkarma.glb', 
+            'facecap.glb', 'ferrari.glb', 'Flamingo.glb', 'gears.glb', 'Horse.glb', 
+            'IridescenceLamp.glb', 'IridescentDishWithOlives.glb', 'kira.glb', 'LittlestTokyo.glb', 'Michelle.glb', 
+            'minimalistic_modern_bedroom.glb', 'nemetona.glb', 'Parrot.glb', 'pool.glb', 'PrimaryIonDrive.glb', 
+            'readyplayer.me.glb', 'rolex.glb', 'ShaderBall.glb', 'ShaderBall2.glb', 'ShadowmappableMesh.glb', 
+            'SheenChair.glb', 'Soldier.glb', 'space_ship_hallway.glb', 'steampunk_camera.glb', 'Stork.glb', 
+            'venice_mask.glb', 'Xbot.glb'
+        ];
+        
+        this.models = filenames.map(name => ({
+            name: name,
+            file: name,
+            category: 'external'
+        }));
     }
 
     async loadConfig() {
         try {
-            const response = await fetch('/api/config');
-            if (!response.ok) throw new Error('Failed to load config');
+            const response = await fetch('model_config.json');
+            if (!response.ok) throw new Error('Failed to load static config');
             const config = await response.json();
             if (config.playerModel) this.config.playerModel = config.playerModel;
             if (config.enemyModels) this.config.enemyModels = config.enemyModels;
             this.configLoaded = true;
-            console.log('Config loaded from API:', this.config);
+            console.log('Config loaded from static file:', this.config);
         } catch (err) {
-            console.warn('API config load failed, trying static file...');
-            try {
-                const response = await fetch('model_config.json');
-                if (!response.ok) throw new Error('Failed to load static config');
-                const config = await response.json();
-                if (config.playerModel) this.config.playerModel = config.playerModel;
-                if (config.enemyModels) this.config.enemyModels = config.enemyModels;
-                this.configLoaded = true;
-                console.log('Config loaded from static file:', this.config);
-            } catch (staticErr) {
-                console.warn('No saved config found, using defaults');
-                this.configLoaded = true;
-            }
+            console.warn('No saved config found, using defaults');
+            this.configLoaded = true;
         }
     }
 
@@ -599,8 +581,8 @@ export class ModelSelector {
             if (cb) cb(this.loadedModels.get(filename).clone(true));
             return;
         }
-        const isKnownLocal = ['Soldier.glb', 'readyplayer.me.glb', 'DragonAttenuation.glb', 'space_ship_hallway.glb'].includes(filename);
-        const path = isKnownLocal ? `assets/models/${filename}` : `/external_models/${filename}`;
+        // All models are now local in assets/models/
+        const path = `assets/models/${filename}`;
         this.loader.load(
             path,
             (gltf) => {

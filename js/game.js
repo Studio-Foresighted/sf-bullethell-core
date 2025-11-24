@@ -386,8 +386,8 @@ export class Game {
             // Add Player Model
             if (config.playerModel && !assets.find(a => a.key === config.playerModel)) {
                 console.log('Adding player model:', config.playerModel);
-                const isKnownLocal = ['Soldier.glb', 'readyplayer.me.glb', 'DragonAttenuation.glb', 'space_ship_hallway.glb'].includes(config.playerModel);
-                const path = isKnownLocal ? `assets/models/${config.playerModel}` : `/external_models/${config.playerModel}`;
+                // All models are now local
+                const path = `assets/models/${config.playerModel}`;
                 
                 assets.push({ 
                     key: config.playerModel, 
@@ -402,8 +402,8 @@ export class Game {
                 config.enemyModels.forEach(m => {
                     if (!assets.find(a => a.key === m)) {
                         console.log('Adding enemy model:', m);
-                        const isKnownLocal = ['Soldier.glb', 'readyplayer.me.glb', 'DragonAttenuation.glb', 'space_ship_hallway.glb'].includes(m);
-                        const path = isKnownLocal ? `assets/models/${m}` : `/external_models/${m}`;
+                        // All models are now local
+                        const path = `assets/models/${m}`;
 
                         assets.push({
                             key: m,
