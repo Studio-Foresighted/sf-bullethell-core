@@ -1,8 +1,6 @@
 {
     "playerModel": "BoomBox.glb",
     "enemyModels": [
-        "readyplayer.me.glb",
-        "DragonAttenuation.glb",
         "rolex.glb",
         "ShaderBall.glb",
         "facecap.glb",
